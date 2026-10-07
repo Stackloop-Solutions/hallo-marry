@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fff7fa">
+<meta name="robots" content="noindex">
+<title>Für dich</title>
+<style>
+  :root {
+    --text: #2a2327;
+    --muted: #9a8f95;
+    --pink: #f4a6c0;
+    --pink-deep: #e57fa6;
+    --pink-soft: #fde8f0;
+    --pink-text: #b0527a;
+    --blue-soft: #e6f0fd;
+    --blue-text: #3d79c4;
+    --line: #f3e4ea;
+    --serif: Georgia, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; min-height: 100dvh; }
+  body {
+    margin: 0;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background:
+      radial-gradient(900px 520px at 0% -10%, #fde8f0 0%, transparent 60%),
+      radial-gradient(800px 480px at 110% 110%, #e9f2fe 0%, transparent 60%),
+      #fffafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+    overflow-x: hidden;
+  }
+
+  /* aufsteigende Herzen im Hintergrund */
+  .hearts { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .hearts span {
+    position: absolute;
+    bottom: -40px;
+    color: var(--pink);
+    opacity: 0;
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    12%  { opacity: .35; }
+    100% { transform: translate(var(--dx), -115vh) rotate(var(--rot)); opacity: 0; }
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+    background: rgba(255, 255, 255, .82);
+    border: 1px solid var(--line);
+    border-radius: 32px;
+    padding: 44px 26px 30px;
+    box-shadow: 0 24px 60px -24px rgba(229, 127, 166, .35);
+  }
+
+  .screen > * {
+    opacity: 0;
+    animation: rise .7s cubic-bezier(.2, .7, .3, 1) forwards;
+    animation-delay: calc(var(--i, 0) * 110ms);
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  .icon { font-size: 54px; line-height: 1; margin-bottom: 22px; animation: rise .7s cubic-bezier(.2,.7,.3,1) forwards, bob 2.8s ease-in-out infinite .8s; }
+  .icon.pulse { animation: rise .7s cubic-bezier(.2,.7,.3,1) forwards, beat 1.4s ease-in-out infinite .8s; }
+  @keyframes bob  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes beat { 0%,100% { transform: scale(1); } 20% { transform: scale(1.14); } 40% { transform: scale(1); } 60% { transform: scale(1.08); } }
+
+  .chip {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--pink-soft);
+    color: var(--pink-text);
+    font-size: 13px;
+    letter-spacing: .03em;
+    margin-bottom: 22px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(26px, 7.2vw, 32px);
+    font-weight: 500;
+    line-height: 1.28;
+    margin: 0 0 14px;
+    letter-spacing: -.005em;
+    white-space: pre-line;
+  }
+  p.sub { margin: 0 0 34px; color: var(--muted); font-size: 16px; line-height: 1.55; }
+
+  .row { display: flex; gap: 12px; justify-content: center; min-height: 54px; }
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+
+  button {
+    font: inherit;
+    font-size: 16px;
+    padding: 15px 36px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--text);
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+  }
+  button:active { transform: scale(.97); }
+  button.primary {
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--pink), var(--pink-deep));
+    box-shadow: 0 10px 24px -10px rgba(229, 127, 166, .8);
+  }
+  @media (hover: hover) {
+    button:hover { border-color: var(--pink); }
+    button.primary:hover { transform: translateY(-2px) scale(1.04); }
+    button.card:hover { background: var(--pink-soft); transform: translateY(-2px); }
+    .back:hover { color: var(--pink-text); border: none; }
+  }
+
+  button.card {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+    padding: 14px 18px;
+    border-radius: 20px;
+  }
+  button.card:active { background: var(--pink-soft); }
+  button.card .ic {
+    flex: none;
+    width: 46px; height: 46px;
+    display: grid; place-items: center;
+    border-radius: 14px;
+    background: var(--pink-soft);
+    font-size: 22px;
+  }
+  button.card .txt { flex: 1; }
+  button.card .main { display: block; font-weight: 600; }
+  button.card .meta { display: block; margin-top: 2px; color: var(--muted); font-size: 14px; }
+  button.card .go { color: var(--pink); font-size: 22px; }
+
+  button.dodge { position: relative; }
+  button.dodge.moving { position: fixed; z-index: 10; transition: left .28s ease, top .28s ease; }
+
+  .hint { margin-top: 26px; min-height: 20px; font-size: 14px; color: var(--muted); }
+  .back {
+    margin-top: 22px;
+    border: none;
+    background: none;
+    padding: 6px 10px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .plan {
+    margin-top: 6px;
+    padding: 22px 18px;
+    border-radius: 22px;
+    border: 1px dashed var(--pink);
+    background: linear-gradient(135deg, #fff, #fff4f8);
+  }
+  .plan small {
+    display: block;
+    color: var(--pink-text);
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .plan .when { font-family: var(--serif); font-size: 22px; line-height: 1.3; }
+  .plan .what { margin-top: 6px; color: var(--muted); font-size: 15px; }
+
+  .sign {
+    margin-top: 34px;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+  }
+  .sign .jul, .sign .mar { padding: 3px 10px; border-radius: 999px; font-size: 12px; }
+  .sign .jul { background: var(--blue-soft); color: var(--blue-text); }
+  .sign .mar { background: var(--pink-soft); color: var(--pink-text); }
+
+  .confetti { position: fixed; pointer-events: none; font-size: 22px; z-index: 20; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .screen > *, .icon { animation: none !important; opacity: 1 !important; }
+    .hearts { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="hearts" id="hearts" aria-hidden="true"></div>
+<main id="app"></main>
+
+<script>
+  // ====== HIER ANPASSEN ======
+  const NAMES = { from: "Julian", to: "Marry" };
+
+  const SCREENS = {
+    intro: {
+      icon: "💌",
+      title: "Ich hab was für dich",
+      sub: "Tippe, um es zu öffnen.",
+      buttons: [{ label: "Öffnen", next: "start", primary: true }]
+    },
+
+    start: {
+      icon: "💗", pulse: true,
+      title: "Hallo mein Schatz,\nhast du Lust, etwas zu unternehmen?",
+      sub: "Ich hab mir etwas für uns überlegt.",
+      buttons: [
+        { label: "Ja", next: "wahl", primary: true },
+        { label: "Nein", dodge: true }
+      ],
+      hints: [
+        "Der Button ist heute etwas schüchtern.",
+        "Ich glaube, der will nicht.",
+        "Fast erwischt!",
+        "Ja ist übrigens viel einfacher zu treffen 😉"
+      ]
+    },
+
+    wahl: {
+      chip: "Schön! 💗",
+      title: "Kino oder Minigolf?",
+      sub: "Du darfst entscheiden.",
+      options: [
+        { icon: "🎬", main: "Kino", next: "kino" },
+        { icon: "⛳", main: "Minigolf", next: "minigolf",
+          plan: { when: "Samstag, 17. Oktober, 12:00 Uhr", what: "Minigolf" } }
+      ],
+      back: true
+    },
+
+    kino: {
+      chip: "Gute Wahl!",
+      title: "Wir müssen noch etwas vom Urlaub nachholen.",
+      sub: "Such dir einen Termin aus:",
+      options: [
+        { icon: "🎬", main: "Sonntag, 19:00 Uhr", meta: "Die Odyssee", next: "kinoFinal",
+          plan: { when: "Sonntag, 19:00 Uhr", what: "Die Odyssee" } },
+        { icon: "🎬", main: "Dienstag, 19:00 Uhr", meta: "Die Odyssee", next: "kinoFinal",
+          plan: { when: "Dienstag, 19:00 Uhr", what: "Die Odyssee" } },
+        { icon: "🕷️", main: "Dienstag, 17:15 Uhr", meta: "Spider-Man", next: "kinoFinal",
+          plan: { when: "Dienstag, 17:15 Uhr", what: "Spider-Man" } }
+      ],
+      back: true
+    },
+
+    minigolfFinal: {
+      final: true,
+      title: "Ich freu mich auf dich!",
+      sub: "Das wird ein schöner Tag mit dir."
+    },
+
+    kinoFinal: {
+      final: true,
+      title: "Ich freu mich auf dich!",
+      sub: "Das wird ein schöner Abend mit dir."
+    }
+  };
+  // Minigolf springt direkt zur Abschlussseite
+  SCREENS.minigolf = SCREENS.minigolfFinal;
+  // ===========================
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const app = document.getElementById("app");
+  const history = [];
+  let current = null;
+  let chosenPlan = null;
+
+  function el(tag, cls, text) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text) n.textContent = text;
+    return n;
+  }
+
+  function go(id, push = true) {
+    if (push && current) history.push(current);
+    current = id;
+    render(id);
+  }
+
+  function render(id) {
+    const s = SCREENS[id];
+    app.replaceChildren();
+    const box = el("section", "screen");
+    const items = [];
+
+    if (s.icon) items.push(el("div", "icon" + (s.pulse ? " pulse" : ""), s.icon));
+    if (s.chip) items.push(el("span", "chip", s.chip));
+    if (s.final) items.push(el("div", "icon pulse", "💗"));
+    items.push(el("h1", "", s.title));
+    if (s.sub) items.push(el("p", "sub", s.sub));
+
+    if (s.final && chosenPlan) {
+      const p = el("div", "plan");
+      p.appendChild(el("small", "", "Unser Date"));
+      p.appendChild(el("div", "when", chosenPlan.when));
+      p.appendChild(el("div", "what", chosenPlan.what));
+      items.push(p);
+    }
+
+    if (s.buttons) {
+      const row = el("div", "row");
+      s.buttons.forEach(b => {
+        const btn = el("button", (b.primary ? "primary " : "") + (b.dodge ? "dodge" : ""), b.label);
+        if (b.dodge) setupDodge(btn, s.hints);
+        else btn.addEventListener("click", () => go(b.next));
+        row.appendChild(btn);
+      });
+      items.push(row);
+      if (s.hints) { const h = el("div", "hint"); h.id = "hint"; items.push(h); }
+    }
+
+    if (s.options) {
+      const stack = el("div", "stack");
+      s.options.forEach(o => {
+        const btn = el("button", "card");
+        btn.appendChild(el("span", "ic", o.icon));
+        const t = el("span", "txt");
+        t.appendChild(el("span", "main", o.main));
+        if (o.meta) t.appendChild(el("span", "meta", o.meta));
+        btn.appendChild(t);
+        btn.appendChild(el("span", "go", "›"));
+        btn.addEventListener("click", () => {
+          if (o.plan) chosenPlan = o.plan;
+          go(o.next);
+        });
+        stack.appendChild(btn);
+      });
+      items.push(stack);
+    }
+
+    if (s.back && history.length) {
+      const b = el("button", "back", "← Zurück");
+      b.addEventListener("click", () => { current = history.pop(); render(current); });
+      items.push(b);
+    }
+
+    const sign = el("div", "sign");
+    sign.appendChild(el("span", "jul", NAMES.from));
+    sign.appendChild(document.createTextNode("💗"));
+    sign.appendChild(el("span", "mar", NAMES.to));
+    items.push(sign);
+
+    items.forEach((n, i) => { n.style.setProperty("--i", i); box.appendChild(n); });
+    app.appendChild(box);
+
+    if (s.final) { setTimeout(burst, 350); setTimeout(burst, 1100); }
+  }
+
+  function setupDodge(btn, hints) {
+    let tries = 0;
+    function dodge(e) {
+      if (e) e.preventDefault();
+      btn.classList.add("moving");
+      const margin = 16;
+      const maxX = window.innerWidth - btn.offsetWidth - margin;
+      const maxY = window.innerHeight - btn.offsetHeight - margin;
+      btn.style.left = Math.max(margin, Math.random() * maxX) + "px";
+      btn.style.top = Math.max(margin, Math.random() * maxY) + "px";
+      const h = document.getElementById("hint");
+      if (h && hints) h.textContent = hints[Math.min(tries, hints.length - 1)];
+      tries++;
+    }
+    // Maus: ausweichen, sobald der Zeiger draufkommt
+    btn.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") dodge(e); });
+    // Touch/Stift: ausweichen schon beim Antippen (einmal pro Berührung)
+    btn.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") dodge(e); });
+    btn.addEventListener("click", e => e.preventDefault());
+  }
+
+  // Herzregen zum Abschluss
+  function burst() {
+    if (reduced) return;
+    const emojis = ["💗", "💕", "💖", "💞", "✨"];
+    for (let i = 0; i < 34; i++) {
+      const s = el("span", "confetti", emojis[Math.floor(Math.random() * emojis.length)]);
+      s.style.left = "50%";
+      s.style.top = "45%";
+      document.body.appendChild(s);
+      const a = Math.random() * Math.PI * 2;
+      const d = 110 + Math.random() * 230;
+      const x = Math.cos(a) * d, y = Math.sin(a) * d + 90;
+      const anim = s.animate([
+        { transform: "translate(-50%,-50%) scale(.4)", opacity: 1 },
+        { transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(1.25) rotate(${(Math.random() - .5) * 120}deg)`, opacity: 0 }
+      ], { duration: 1400 + Math.random() * 900, easing: "cubic-bezier(.2,.7,.3,1)" });
+      anim.onfinish = () => s.remove();
+    }
+  }
+
+  // Hintergrund-Herzen
+  (function hearts() {
+    if (reduced) return;
+    const wrap = document.getElementById("hearts");
+    for (let i = 0; i < 16; i++) {
+      const h = el("span", "", "♥");
+      h.style.left = Math.random() * 100 + "%";
+      h.style.fontSize = 12 + Math.random() * 22 + "px";
+      h.style.animationDuration = 11 + Math.random() * 12 + "s";
+      h.style.animationDelay = -Math.random() * 20 + "s";
+      h.style.setProperty("--dx", (Math.random() - .5) * 120 + "px");
+      h.style.setProperty("--rot", (Math.random() - .5) * 60 + "deg");
+      wrap.appendChild(h);
+    }
+  })();
+
+  go("intro", false);
+</script>
+</body>
+</html>
